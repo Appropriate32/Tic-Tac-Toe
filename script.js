@@ -60,18 +60,27 @@ const gameController = (function () {
             win = false;
             moveCount = 0;
 
-            console.log(`${players[currentIndex].name}'s turn!`);
+            return {
+                ok: true,
+                result: "start",
+                currentPlayer: players[currentIndex].name,
+                message: `${players[currentIndex].name}'s turn!`,
+                scores: {
+                       [players[0].name]: players[0].getScore(),
+                       [players[1].name]: players[1].getScore()
+                }
+            }
             
         },
         getCurrentPlayer() {
             return players[currentIndex];
         },
         playRound(index) {
-            if ((index < 0 || index > 8) || (typeof index !== 'number')) return;
-            if (!gameActive) return;
+            if ((index < 0 || index > 8) || (typeof index !== 'number')) return {ok: false, result: "invalid", message: "Invalid index"};
+            if (!gameActive) return {ok: false, result: "inactive", message: "Game is not active"};
             const currentPlayer = players[currentIndex];
             const success = gameBoard.setMark(index, currentPlayer.marker);
-            if (!success) return console.log('Spot taken!');
+            if (!success) return {ok: false, result: "occupied", message: "Spot is taken!"};
 
             moveCount++;
             if (isWin()) {
@@ -84,17 +93,30 @@ const gameController = (function () {
                     scores: {
                         [players[0].name]: players[0].getScore(), 
                         [players[1].name]: players[1].getScore()
-
-                    },
-                    message: `${currentPlayer.name} wins!\nScores - ${players[0].name}: ${players[0].getScore()}, ${players[1].name}: ${players[1].getScore()}`
+                     },
+                    message: `${currentPlayer.name} wins!\nScores - ${players[0].name}: ${players[0].getScore()},
+                     ${players[1].name}: ${players[1].getScore()}`
                 };
             } else if (moveCount === 9) {
-                console.log("It is a tie!");
                 gameActive = false;
-                return;
+                return {
+                    ok: false,
+                    result: "tie",
+                    winner: null,
+                    scores: {
+                         [players[0].name]: players[0].getScore(), 
+                         [players[1].name]: players[1].getScore()
+                    },
+                    message: `It was a tie!`
+                };
             }
             switchPlayer();
-            console.log(`${players[currentIndex].name}'s turn!`);
+            return {
+                ok: true,
+                result: "next",
+                currentPlayer: players[currentIndex].name,
+                message: `${players[currentIndex].name}'s turn!`
+            };
         }
     };
 })();
@@ -110,9 +132,16 @@ function createPlayer(name, marker) {
     };
 }
 
-gameController.startGame("Eissa", "Moosa");
-gameController.playRound(3);
-gameController.playRound(2);
-gameController.playRound(4);
-gameController.playRound(1);
-gameController.playRound(5);
+function debugPlay(index) {
+  const result = gameController.playRound(index);
+  console.log(result);
+  console.log(gameBoard.getBoard());
+}
+
+console.log(gameController.startGame("Eissa", "Moosa"));
+debugPlay(2);
+debugPlay(4);
+debugPlay(0);
+debugPlay(5);
+debugPlay(1);
+debugPlay(8);
