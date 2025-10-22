@@ -121,6 +121,10 @@ const gameController = (function () {
     };
 })();
 
+const displayController = (function(){
+
+})();
+
 function createPlayer(name, marker) {
     let score = 0;
     return {
@@ -131,17 +135,3 @@ function createPlayer(name, marker) {
 
     };
 }
-
-function debugPlay(index) {
-  const result = gameController.playRound(index);
-  console.log(result);
-  console.log(gameBoard.getBoard());
-}
-
-console.log(gameController.startGame("Eissa", "Moosa"));
-debugPlay(2);
-debugPlay(4);
-debugPlay(0);
-debugPlay(5);
-debugPlay(1);
-debugPlay(8);
