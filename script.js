@@ -122,7 +122,34 @@ const gameController = (function () {
 })();
 
 const displayController = (function(){
+        return {
+            init: function() {
+                const cells = document.querySelectorAll(".cell");
+                const restart = document.querySelector(".restart");
+                const playerDisplay = document.querySelector(".player-display");
+                const startButton = document.querySelector(".start-game");
+                const startMessage = document.querySelector(".start-message");
 
+                cells.forEach((cell, index) => {
+                    cell.addEventListener("click", () => {
+                    const resultClick = gameController.playRound(index);
+                    if (resultClick.ok == true) {
+                        playerDisplay.textContent = resultClick.message;
+                        cell.textContent = gameController.getCurrentPlayer().marker;
+                        }   
+
+                    });
+                });
+                
+
+                startButton.addEventListener("click", () => {
+                    startObject = gameController.startGame("Eissa", "Moosa");
+                    startMessage.textContent = "Game has started!";
+                    startMessage.style.display = "block";
+                    playerDisplay.textContent = startObject.message; 
+                });
+            },
+        }
 })();
 
 function createPlayer(name, marker) {
@@ -135,3 +162,5 @@ function createPlayer(name, marker) {
 
     };
 }
+
+displayController.init();
